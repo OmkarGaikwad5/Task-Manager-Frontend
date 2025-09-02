@@ -11,27 +11,25 @@ export default function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get("/api/auth/me")
-      .then((res) => setUser(res.data))
+    api.get("/api/auth/me")
+      .then(res => {
+        setAuthToken(res.data.token); // <-- optional if token is sent
+        setUser(res.data.user);
+      })
       .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
   const login = async (email, password) => {
     const { data } = await api.post("/api/auth/login", { email, password });
-    setUser(data.user);
     setAuthToken(data.token);
+    setUser(data.user);
   };
 
   const register = async (name, email, password) => {
-    const { data } = await api.post("/api/auth/register", {
-      name,
-      email,
-      password,
-    });
-    setUser(data.user);
+    const { data } = await api.post("/api/auth/register", { name, email, password });
     setAuthToken(data.token);
+    setUser(data.user);
   };
 
   const logout = async () => {
